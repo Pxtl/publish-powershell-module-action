@@ -1,12 +1,17 @@
 name: Publish PowerShell Module
-description: Publishes a PowerShell module to the PowerShell Gallery.
+description: Publishes PowerShell module(s) to the PowerShell Gallery.
 inputs:
   NuGetApiKey:
     description: The NuGet API Key for PowerShell Gallery, with permission to push this module.
     required: true
   modulePath:
-    description: The filesystem path to the module to publish.  If not provided, all directories that contains a .psd1 are published.
+    description: The filesystem path to the module to publish. If not provided, all directories that contains a .psd1 are published.
     required: false
+  continueIfAlreadyPublished:
+    description: Continue if the module is already published and available in PSGallery. Logs a warning.
+    required: false
+    type: bool
+    default: false
 outputs:
   successfullyPublished: # id of output
     description: Whether or not the publish command was successful
@@ -16,3 +21,4 @@ runs:
   args:
     - ${{ inputs.NuGetApiKey }}
     - ${{ inputs.modulePath }}
+    - ${{ inputs.continueIfAlreadyPublished }}

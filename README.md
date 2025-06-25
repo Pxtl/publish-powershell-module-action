@@ -2,6 +2,8 @@
 
 This GitHub Action enables you to publish a PowerShell module to the [PowerShell Gallery](https://powershellgallery.com).
 
+Forked from [pcgeek86/publish-powershell-module-action](https://github.com/pcgeek86/publish-powershell-module-action)
+
 ## Usage
 
 1. Add a GitHub Actions Workflow configuration to your GitHub project, under `.github/workflows/main.yml`
