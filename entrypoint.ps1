@@ -1,6 +1,15 @@
 #!/usr/bin/env pwsh
 [CmdletBinding()]
-param()
+param (
+    [Parameter()]
+    [string] $NugetApiKey,
+
+    [Parameter()]
+    [string] $ModulePath,
+
+    [Parameter()]
+    [string] $ContinueIfAlreadyPublishedStr
+)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -16,26 +25,26 @@ if ($env:ACTIONS_RUNNER_DEBUG) {
 
 # get continueIfAlreadyPublished var
 $continueIfAlreadyPublished = $false
-if ($env:continueIfAlreadyPublished) {
-    $continueIfAlreadyPublished = [bool]::Parse($env:INPUT_continueIfAlreadyPublished)
+if ($ContinueIfAlreadyPublishedStr) {
+    $continueIfAlreadyPublished = [bool]::Parse($ContinueIfAlreadyPublishedStr)
 }
 
 $modules = $null
-if ([string]::IsNullOrWhiteSpace($env:INPUT_modulePath)) {
+if ($ModulePath) {
+    $modules = $ModulePath
+} else {
     $modules = Get-ChildItem -Recurse -Filter '*.psd1' |
         # PS module .psd1 files must match the name of their parent directory,
         # this filter helps prevent finding non-module .psd1 files.
         Where-Object { $_.Directory.Name -eq [IO.Path]::GetFileNameWithoutExtension($_)} |
         Select-Object -Unique -ExpandProperty Directory
-} else {
-    $modules = @($env:INPUT_modulePath)
 }
 
 $modules | ForEach-Object {
     Write-Host "Publishing '$_' to PowerShell Gallery..."
 
     try {
-        Publish-Module -Path $_ -NuGetApiKey $env:INPUT_NuGetApiKey
+        Publish-Module -Path $_ -NuGetApiKey $NugetApiKey
         Write-Verbose "'$_' published to PowerShell Gallery."
     } catch {
         $alreadyPublishedErrorMessageRegex = "The module '[A-Za-z0-9_\-]+' with version '[0-9\.]+' cannot be published as the current version '[0-9\.]+' is already available in the repository"
