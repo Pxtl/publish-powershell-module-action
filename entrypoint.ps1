@@ -48,7 +48,10 @@ $modules | ForEach-Object {
         Write-Verbose "'$_' published to PowerShell Gallery."
     } catch {
         $alreadyPublishedErrorMessageRegex = "The module '[A-Za-z0-9_\-]+' with version '[0-9\.]+' cannot be published as the current version '[0-9\.]+' is already available in the repository"
-        if ($continueIfAlreadyPublished -and ($_.Message -match $alreadyPublishedErrorMessageRegex)) {
+        if ($continueIfAlreadyPublished -and 
+            ($_ -is [Management.Automation.ErrorRecord]) -and 
+            ($_.Exception.Message -match $alreadyPublishedErrorMessageRegex)
+        ) {
             "::warning::$($_.Message)"
         } else {
             throw
