@@ -52,7 +52,7 @@ $modules | ForEach-Object {
             ($_ -is [Management.Automation.ErrorRecord]) -and 
             ($_.Exception.Message -match $alreadyPublishedErrorMessageRegex)
         ) {
-            "::warning::$($_.Message)"
+            "::warning::$($_.Exception.Message)"
         } else {
             throw
         }
